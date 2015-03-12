@@ -1,2 +1,7 @@
 # benchmark
-Preprocessor benchmarks
+Preprocessor benchmarks.
+
+Usage:
+```
+$ ./all.sh /tmp/bench
+```
