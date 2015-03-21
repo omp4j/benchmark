@@ -1,4 +1,4 @@
-public class Fibonacci implements Runnable {
+public class FibonacciSaved implements Runnable {
 
 	private int fibonacci(int n) {
 		if (n <= 1) return 1;
@@ -8,9 +8,11 @@ public class Fibonacci implements Runnable {
 	@Override
 	public void run() {
 
+		int arr[] = new int[!N!];
+
 		// omp parallel for threadNum(!threadNum!) schedule(!schedule!)
 		for (int i = 0; i < !N!; i++) {
-			fibonacci(30);
+			arr[i] = fibonacci(28 + i%7);
 		}
 	}
 }

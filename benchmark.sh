@@ -37,7 +37,7 @@ cd $path
 
 # prepare pre-package
 cd $currPath
-CLASSPATH="/tmp/bench/bin:$CLASSPATH"
+CLASSPATH=$path":"$CLASSPATH
 for f in $files; do
 	className=$(echo $f | sed "s/\.class//")
 	# echo $className

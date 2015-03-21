@@ -13,10 +13,20 @@ public class Benchmark implements Runnable {
 
 	@Override
 	public void run() {
+		// identify test
+		String tokens[] = fqn.split("_");
+		String id = tokens[0];
+		String threads = tokens[1];
+		String workload = tokens[2];
+		String schedule = tokens[3];
+
+		// measure walltime
 		long start = System.nanoTime();
 		test.run();
 		long stop = System.nanoTime();
-		System.out.println(fqn + ";" + start + ";" + stop);
+
+		// print output
+		System.out.format("%s;%s;%s;%s;%s;%d;%d\n", fqn, id, threads, workload, schedule, start, stop);
 	}
 
 	public static void main(String[] args) {
