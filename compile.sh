@@ -10,10 +10,7 @@
 # Author: Petr Belohlavek
 
 path="."
-prePackage="org.omp4j.benchmark.pre"
-postPackage="org.omp4j.benchmark.post"
-srcDir="src"
-binDir="bin"
+srcDir="org/omp4j/benchmark/"
 
 if [ $# -gt 1 ]; then
 	printf "Usage: ./compile.sh [dir=.]\nwhere dir=path to benchmark dir. with src/ filled with sources to benchmark.\n"
@@ -24,29 +21,11 @@ fi
 
 
 cd $path
-mkdir -pv $binDir
+abstractBenchPath=$PWD/$srcDir/"AbstractBenchmark.java"
 # TODO: assure $srcDir existence
 
 # original files to be benchmarked
-files=$(ls -d $PWD/$srcDir/*.java | tr "\n" " ")
-
-# prepare pre-package
-for f in $files; do
-	sed -i "1ipackage $postPackage;" $f
-done
+files=$(ls -d $PWD/$srcDir/*.java | grep -v "Abstract" | tr "\n" " ")
 
 # preprocess & compile preprocessed sources into $binDir
-omp4j "-d $PWD/$binDir/ -- $files"
-
-# prepare post-package
-for f in $files; do
-	sed -i "1 s/^.*$/package $prePackage;/g" $f
-done
-
-# compile original sources
-javac -d $binDir $files
-
-# remove package information
-for f in $files; do
-	sed -i "1d" $f
-done
+omp4j "-d $PWD -- $files $abstractBenchPath"

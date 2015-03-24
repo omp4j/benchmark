@@ -5,7 +5,9 @@
 
 path="."
 resDir="resources"
-srcDir="src"
+refDir=$resDir/"reference"
+srcDir="org/omp4j/benchmark/"
+abstractBenchPath="./org/omp4j/benchmark/"
 
 if [ $# -gt 1 ]; then
 	printf "Usage: ./generate.sh [dir=.]\nwhere dir=path to benchmark dir.\n"
@@ -21,23 +23,23 @@ cd $resDir
 files=$(ls *.java | tr "\n" " ")
 cd ..
 
-for f in $files; do
+timeout=20	# "work" timeout
 
+for f in $files; do
 	oldClassName=$(echo $f | sed 's/\.java$//')
 
-	for n in 100 1000 10000; do
-		for schedule in "dynamic" "static"; do
-			for threadNum in 1 2 3 4; do
+	for schedule in "dynamic"; do # "static"	# schedule type
+	for threadNum in $(seq 1 48); do	# number of threads
 
-				className="$oldClassName"_"$threadNum"_"$n"_"$schedule"
-				ff=$path/$srcDir/$className.java
-				cp $resDir/$f $ff
+		className="$oldClassName"_"$threadNum"_"$schedule"
+		ff=$path/$srcDir/$className.java
+		cp $resDir/$f $ff
 
-				sed -i "s/!threadNum!/$threadNum/g" $ff
-				sed -i "s/!N!/$n/g" $ff
-				sed -i "s/!schedule!/$schedule/g" $ff
-				sed -i "s/$oldClassName/$className/g" $ff
-			done
-		done
+		sed -i "s/!threadNum!/$threadNum/g" $ff
+		sed -i "s/!schedule!/$schedule/g" $ff
+		sed -i "s/$oldClassName/$className/g" $ff
+	done
 	done
 done
+
+cp $abstractBenchPath/"AbstractBenchmark.java" $path/$srcDir/AbstractBenchmark.java

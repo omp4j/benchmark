@@ -1,19 +1,11 @@
 #!/bin/sh
 
-# The workflow follows:
-# 1) preprocess sources
-# 2) compile them
-# 3) compile original sources
-# To the stdout the following is written:
-# $path $prePackage $postPackage
-# $files
 # Author: Petr Belohlavek
 
 path="."
-prePackage="org.omp4j.benchmark.pre"
-postPackage="org.omp4j.benchmark.post"
-prePath=$(echo $prePackage | tr "." "/")
-postPath=$(echo $postPackage | tr "." "/")
+srcDir="org/omp4j/benchmark/"
+package="org.omp4j.benchmark"
+
 benchmarker="org.omp4j.benchmark.Benchmark"
 benchmarkerFile=$(echo $benchmarker | tr "." "/").java
 
@@ -31,17 +23,18 @@ javac $benchmarkerFile
 
 cd $path
 # original files to be benchmarked
-cd $prePath
-files=$(ls *.class | tr "\n" " ")
-cd $path
+files=$(ls -d $PWD/$srcDir/*.java | grep -v "Abstract" | tr "\n" " ")
 
 # prepare pre-package
 cd $currPath
 CLASSPATH=$path":"$CLASSPATH
-for f in $files; do
-	className=$(echo $f | sed "s/\.class//")
-	# echo $className
 
-	java $benchmarker $prePackage.$className
-	java $benchmarker $postPackage.$className
+for f in $files; do
+	className=$(echo $f | sed 's/\.java$//' | sed 's|^.*/||g' | tr "/" ".")
+
+	# for workload in $(seq 10 10 100); do
+	for workload in 50 75 100 500 1000 3000 7000 10000; do
+		printf "Benching file %s with workload=%s\n" $f $workload >&2
+		java $benchmarker $package"."$className $workload
+	done
 done

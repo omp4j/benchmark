@@ -5,7 +5,6 @@
 
 path="."
 resDir="resources"
-srcDir="src"
 
 if [ $# -eq 1 ]; then
 	path=$1
@@ -18,4 +17,4 @@ mkdir -p $path
 
 ./generate.sh $path
 ./compile.sh $path
-./benchmark.sh $path/bin
+./benchmark.sh $path
