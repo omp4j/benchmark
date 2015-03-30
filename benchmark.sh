@@ -32,9 +32,10 @@ CLASSPATH=$path":"$CLASSPATH
 for f in $files; do
 	className=$(echo $f | sed 's/\.java$//' | sed 's|^.*/||g' | tr "/" ".")
 
-	# for workload in $(seq 10 10 100); do
-	for workload in 50 75 100 500 1000 3000 7000 10000; do
-		printf "Benching file %s with workload=%s\n" $f $workload >&2
+	#for workload in $(seq 100 100 1000); do
+	for workload in 100 600 1000; do
+		printf "%s: Benching file %s with workload=%s\n" $(date +"%T") $f $workload >&2
 		java $benchmarker $package"."$className $workload
+		printf "%s: Done\n" $(date +"%T") >&2
 	done
 done
