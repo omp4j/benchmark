@@ -2,7 +2,7 @@ package org.omp4j.benchmark;
 
 public abstract class AbstractBenchmark {
 
-	protected final int workload;
+	protected int workload;
 	protected final long timeout = 10;
 
 	public AbstractBenchmark(Integer workload) {

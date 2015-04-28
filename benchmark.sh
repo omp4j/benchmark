@@ -3,7 +3,7 @@
 # Author: Petr Belohlavek
 
 path="."
-srcDir="org/omp4j/benchmark/"
+srcDir="org/omp4j/benchmark"
 package="org.omp4j.benchmark"
 
 benchmarker="org.omp4j.benchmark.Benchmark"
@@ -28,14 +28,14 @@ files=$(ls -d $PWD/$srcDir/*.java | grep -v "Abstract" | tr "\n" " ")
 # prepare pre-package
 cd $currPath
 CLASSPATH=$path":"$CLASSPATH
+echo $CLASSPATH
 
 for f in $files; do
 	className=$(echo $f | sed 's/\.java$//' | sed 's|^.*/||g' | tr "/" ".")
 
-	#for workload in $(seq 100 100 1000); do
-	for workload in 100 600 1000; do
+	for workload in 1000 5000; do
 		printf "%s: Benching file %s with workload=%s\n" $(date +"%T") $f $workload >&2
-		java $benchmarker $package"."$className $workload
+		java "-Xmx4g" "-Xms4g" $benchmarker $package"."$className $workload
 		printf "%s: Done\n" $(date +"%T") >&2
 	done
 done

@@ -28,4 +28,4 @@ abstractBenchPath=$PWD/$srcDir/"AbstractBenchmark.java"
 files=$(ls -d $PWD/$srcDir/*.java | grep -v "Abstract" | tr "\n" " ")
 
 # preprocess & compile preprocessed sources into $binDir
-omp4j "-d $PWD -- $files $abstractBenchPath"
+omp4j -d $PWD -s $PWD $files $abstractBenchPath

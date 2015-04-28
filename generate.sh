@@ -23,13 +23,11 @@ cd $resDir
 files=$(ls *.java | tr "\n" " ")
 cd ..
 
-timeout=20	# "work" timeout
-
 for f in $files; do
 	oldClassName=$(echo $f | sed 's/\.java$//')
 
-	for schedule in "dynamic"; do # "static"	# schedule type
-	for threadNum in $(seq 1 48); do	# number of threads
+	for schedule in "dynamic"; do	# schedule type
+	for threadNum in 1 4 8 12 24 48; do	# number of threads
 
 		className="$oldClassName"_"$threadNum"_"$schedule"
 		ff=$path/$srcDir/$className.java
