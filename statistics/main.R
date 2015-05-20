@@ -34,7 +34,9 @@ dev.off()
 
 setEPS()
 postscript("output/fib-20k-dyn-resid.eps")
-plot(resid(lm(formula = dataset$speedup ~ dataset$cores + I(dataset$cores^2))))
+full.dataset1 <- load.dataset("data/result1.csv", aggr=F)
+dataset <- full.dataset1[full.dataset1$workload == 20000,]
+plot(resid(lm(formula = dataset$speedup ~ dataset$cores + I(dataset$cores^2))), ylab = 'residuals')
 dev.off()
 
 ################################## Fibonacci sp/wl
@@ -57,7 +59,7 @@ dev.off()
 
 ################################## Fibonacci distribution
 
-dataset3 <- load.dataset("data/result1_norm.csv", aggr = FALSE)
+dataset3 <- load.dataset("data/result_fibdistr.csv", aggr = FALSE)
 
 setEPS()
 postscript("output/fib-8c-dyn-box.esp")
@@ -68,8 +70,39 @@ dev.off()
 setEPS()
 postscript("output/fib-24c-dyn-box.esp")
 normality24 <- fix.cores.schedule(dataset3, name = "Fibonacci", cores = 24, schedule = "dynamic")
-plot.boxplot(normality24, name = "Fibonacci", cores = 24, schedule = "dynamic", from=15, to=24)
+plot.boxplot(normality24, name = "Fibonacci", cores = 24, schedule = "dynamic", from=14, to=24)
 dev.off()
+
+normality8.1k <- normality8[normality8[,"workload"]==1000,]
+normality8.10k <- normality8[normality8[,"workload"]==10000,]
+normality24.1k <- normality24[normality24[,"workload"]==1000,]
+normality24.10k <- normality24[normality24[,"workload"]==10000,]
+
+setEPS()
+postscript("output/fib-hist-1k-8c.eps")
+hist(normality8.1k$speedup, breaks = 30, xlab = 'speedup', main = "8 cores, 1.000 workload", xlim=c(5.5,12), ylim=c(0,70))
+abline(v=8,col="blue")
+dev.off()
+
+setEPS()
+postscript("output/fib-hist-10k-8c.eps")
+hist(normality8.10k$speedup, breaks = 30, xlab = 'speedup', main = "8 cores, 10.000 workload", xlim=c(5.5,12), ylim=c(0,70))
+abline(v=8,col="blue")
+dev.off()
+
+setEPS()
+postscript("output/fib-hist-1k-24c.eps")
+hist(normality24.1k$speedup, breaks = 30, xlab = 'speedup', main = "24 cores, 1.000 workload", xlim=c(14,35), ylim=c(0,70))
+abline(v=24,col="blue")
+dev.off()
+
+setEPS()
+postscript("output/fib-hist-10k-24c.eps")
+hist(normality24.10k$speedup, breaks = 30, xlab = 'speedup', main = "24 cores, 10.000 workload", xlim=c(14,35), ylim=c(0,70))
+abline(v=24,col="blue")
+dev.off()
+
+shapiro.test(normality8$speedup)
 
 ##################################x
 ##################################x
@@ -114,7 +147,7 @@ setEPS()
 postscript("output/fib-res-full.eps")
 rdataset <- load.dataset('data/result_reg.csv', aggr=F)
 rrr <- lm(rdataset$speedup ~ rdataset$cores + I(rdataset$cores^2) + I(rdataset$cores^4) + rdataset$workload + I(rdataset$workload^2))
-plot(resid(rrr))
+plot(resid(rrr), , ylab = 'residuals')
 dev.off()
 
 ###################################### Master overhead
@@ -178,12 +211,12 @@ cpp.1k <- load.cpp.dataset("data/result_cpp1k.csv", "data/cpp_serial_1k.csv")
 setEPS()
 postscript("output/cpp-comparison-1k.eps")
 
-plot.speedup.core(Fibonacci.w1k.sd, "Fibonacci omp4j vs. C++", workload = 1000, schedule = "dynamic")
+plot.speedup.core(Fibonacci.w1k.sd, "Fibonacci omp4j vs. C++", workload = 1000, schedule = "dynamic", col="red")
 par(new=T)
-plot(cpp.1k[c("cores", "speedup")], col="red", axes = F, xlim=c(0,50), ylim=c(0,50))
+plot(cpp.1k[c("cores", "speedup")], col="black", axes = F, xlim=c(0,50), ylim=c(0,50))
 par(new=F)
 
-legend('topleft', c('OpenMP', 'omp4j'), lty=1, col=c('red', 'black'), bty='n')
+legend('topleft', c('gcc', 'omp4j'), lty=1, col=c('black', 'red'), bty='n')
 
 dev.off()
 
@@ -194,11 +227,11 @@ cpp.20k <- load.cpp.dataset("data/result_cpp20k.csv", "data/cpp_serial_20k.csv")
 setEPS()
 postscript("output/cpp-comparison-20k.eps")
 
-plot.speedup.core(Fibonacci.w20k.sd, "Fibonacci omp4j vs. C++", workload = 1000, schedule = "dynamic")
+plot.speedup.core(Fibonacci.w20k.sd, "Fibonacci omp4j vs. C++", workload = 1000, schedule = "dynamic", col="red")
 par(new=T)
-plot(cpp.20k[c("cores", "speedup")], col="red", axes = F, xlim=c(0,50), ylim=c(0,50))
+plot(cpp.20k[c("cores", "speedup")], col="black", axes = F, xlim=c(0,50), ylim=c(0,50))
 par(new=F)
-legend('topleft', c('OpenMP', 'omp4j'), lty=1, col=c('red', 'black'), bty='n')
+legend('topleft', c('gcc', 'omp4j'), lty=1, col=c('black', 'red'), bty='n')
 
 dev.off()
 
@@ -211,11 +244,11 @@ jomp.1k <- fix.workload.schedule(jomp, name="FibJOMP", workload=1000, schedule="
 setEPS()
 postscript("output/jomp-comparison-1k.eps")
 
-plot.speedup.core(Fibonacci.w1k.sd, "Fibonacci omp4j vs. JOMP", workload = 1000, schedule = "dynamic")
+plot.speedup.core(Fibonacci.w1k.sd, "Fibonacci omp4j vs. JOMP", workload = 1000, schedule = "dynamic", col="red")
 par(new=T)
-plot(jomp.1k[c("cores", "speedup")], col="red", axes = F, xlim=c(0,50), ylim=c(0,50))
+plot(jomp.1k[c("cores", "speedup")], col="black", axes = F, xlim=c(0,50), ylim=c(0,50))
 par(new=F)
-legend('topleft', c('JOMP', 'omp4j'), lty=1, col=c('red', 'black'), bty='n')
+legend('topleft', c('JOMP', 'omp4j'), lty=1, col=c('black', 'red'), bty='n')
 
 dev.off()
 
@@ -226,11 +259,11 @@ jomp.20k <- fix.workload.schedule(jomp, name="FibJOMP", workload=20000, schedule
 setEPS()
 postscript("output/jomp-comparison-20k.eps")
 
-plot.speedup.core(Fibonacci.w20k.sd, "Fibonacci omp4j vs. JOMP", workload = 20000, schedule = "dynamic")
+plot.speedup.core(Fibonacci.w20k.sd, "Fibonacci omp4j vs. JOMP", workload = 20000, schedule = "dynamic", col="red")
 par(new=T)
-plot(jomp.20k[c("cores", "speedup")], col="red", axes = F, xlim=c(0,50), ylim=c(0,50))
+plot(jomp.20k[c("cores", "speedup")], col="black", axes = F, xlim=c(0,50), ylim=c(0,50))
 par(new=F)
-legend('topleft', c('JOMP', 'omp4j'), lty=1, col=c('red', 'black'), bty='n')
+legend('topleft', c('JOMP', 'omp4j'), lty=1, col=c('black', 'red'), bty='n')
 
 dev.off()
 

@@ -1,5 +1,5 @@
 # Plot speedup/core graph
-plot.speedup.core <- function(dataset, name, workload, schedule="dynamic", max.cores=50, plot.optimal=TRUE, plot.regression=FALSE) {
+plot.speedup.core <- function(dataset, name, workload, schedule="dynamic", max.cores=50, plot.optimal=TRUE, plot.regression=FALSE, col="black") {
 
 	# plot dataset
 	plot(
@@ -8,7 +8,8 @@ plot.speedup.core <- function(dataset, name, workload, schedule="dynamic", max.c
 		xlab = "cores",
 		ylab = "speedup",
 		xlim = c(0, max.cores),
-		ylim = c(0, max.cores)
+		ylim = c(0, max.cores),
+		col=col
 	)
 
 	# plot optimal speedup
